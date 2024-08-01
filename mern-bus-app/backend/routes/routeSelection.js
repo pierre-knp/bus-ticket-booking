@@ -2,56 +2,40 @@ var express = require('express');
 var router = express.Router();
 var bus = require('../models/Buses');
 
-
-// router.get('/', (req, res) => {
-//     bus.find({ companyName, startCity, totalseats, availableseats }, (err, result) => {
-//         if (err) res.send(err)
-//         else res.json({ result })
-//     })
-// })
-
-router.post('/', (req, res) => {
-
-    bus.find({ 'startCity': req.body.startCity, 'destination': req.body.destination }).exec((err, bus) => {
+// Endpoint to find buses by startCity and destination
+router.post('/search', (req, res) => {
+    bus.find({ startCity: req.body.startCity, destination: req.body.destination }).exec((err, buses) => {
         if (err) {
-            res.json({ status: false, message: "error while searching" })
+            res.json({ status: false, message: "Error while searching" });
+        } else {
+            res.json({ status: true, buses });
         }
-        else res.json({ bus })
-    })
-})
+    });
+});
 
-router.post('/', (req, res) => {
-
+// Endpoint to find a specific bus by ID
+router.post('/findById', (req, res) => {
     bus.findOne({ _id: req.body.bId }, (err, bus) => {
         if (err) {
-            res.json({ status: false, message: "error while searching with ID" })
+            res.json({ status: false, message: "Error while searching with ID" });
+        } else if (!bus) {
+            res.json({ status: false, message: "Bus not found" });
+        } else {
+            res.json({ status: true, bus });
         }
-        else
-            res.json({ bus })
-    })
-})
+    });
+});
 
-// router.post('/', (req, res) => {
-//     let newBus = new bus(req.body)
+// Endpoint to add a new bus (Uncomment if needed)
+// router.post('/add', (req, res) => {
+//     let newBus = new bus(req.body);
 //     newBus.save((err, bus) => {
-//         if (err) console.log(err)
-//         else res.status(201).json(bus)
-//     })
-// })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//         if (err) {
+//             res.json({ status: false, message: "Error while saving bus" });
+//         } else {
+//             res.status(201).json({ status: true, bus });
+//         }
+//     });
+// });
 
 module.exports = router;
