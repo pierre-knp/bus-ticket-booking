@@ -1,13 +1,81 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Express</title>
-  <link rel="stylesheet" href="/stylesheets/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
 </head>
-
 <body>
-  <h1>Express</h1>
-  <p>Welcome to Express</p>
-</body>
+    <h1>Test API Endpoints</h1>
 
+    <!-- Form to search buses -->
+    <h2>Search Buses</h2>
+    <form id="searchForm">
+        <label for="startCity">Start City:</label>
+        <input type="text" id="startCity" name="startCity" required>
+        <br>
+        <label for="destination">Destination:</label>
+        <input type="text" id="destination" name="destination" required>
+        <br>
+        <button type="submit">Search</button>
+    </form>
+    <pre id="searchResult"></pre>
+
+    <!-- Form to find bus by ID -->
+    <h2>Find Bus by ID</h2>
+    <form id="findByIdForm">
+        <label for="bId">Bus ID:</label>
+        <input type="text" id="bId" name="bId" required>
+        <br>
+        <button type="submit">Find</button>
+    </form>
+    <pre id="findByIdResult"></pre>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const startCity = document.getElementById('startCity').value;
+            const destination = document.getElementById('destination').value;
+
+            fetch('/booking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ startCity, destination })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('searchResult').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('searchResult').textContent = 'Error occurred';
+            });
+        });
+
+        document.getElementById('findByIdForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const bId = document.getElementById('bId').value;
+
+            fetch('/booking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ bId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('findByIdResult').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('findByIdResult').textContent = 'Error occurred';
+            });
+        });
+    </script>
+</body>
 </html>
