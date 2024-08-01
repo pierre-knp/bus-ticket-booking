@@ -26,16 +26,15 @@ router.post('/findById', (req, res) => {
     });
 });
 
-// Endpoint to add a new bus (Uncomment if needed)
-// router.post('/add', (req, res) => {
-//     let newBus = new bus(req.body);
-//     newBus.save((err, bus) => {
-//         if (err) {
-//             res.json({ status: false, message: "Error while saving bus" });
-//         } else {
-//             res.status(201).json({ status: true, bus });
-//         }
-//     });
-// });
+router.post('/add', (req, res) => {
+    let newBus = new bus(req.body);
+    newBus.save((err, bus) => {
+        if (err) {
+            res.json({ status: false, message: "Error while saving bus" });
+        } else {
+            res.status(201).json({ status: true, bus });
+        }
+    });
+});
 
 module.exports = router;
