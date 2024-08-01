@@ -1,5 +1,4 @@
-# MERN-BUS-APP
-## MFRP (My First Real Project) assigned by Cognizant during Internship
+# ticket booking app
 
 A Bus ticket booking application made using MERN Stack (MongoDB, Express js, React js, Node js)
 
