@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./frontend
+
+    - name: Build frontend
+      run: npm run build
+      working-directory: ./frontend
+
+    - name: Docker Build and Push
+      run: |
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        docker build -t $DOCKER_REGISTRY/my-backend-image:${{ github.sha }} ./backend
+        docker build -t $DOCKER_REGISTRY/my-frontend-image:${{ github.sha }} ./frontend
+        docker push $DOCKER_REGISTRY/my-backend-image:${{ github.sha }}
+        docker push $DOCKER_REGISTRY/my-frontend-image:${{ github.sha }}
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Helm
+      uses: azure/setup-helm@v1
+
+    - name: Set up Kubernetes CLI
+      uses: azure/setup-kubectl@v1
+      with:
+        kubectl-version: '1.24.0' # Adjust to the version you need
+
+    - name: Helm Upgrade
+      run: |
+        helm upgrade --install backend-release ./helm/backend-chart --namespace default --set image.repository=$DOCKER_REGISTRY/my-backend-image --set image.tag=${{ github.sha }}
+        helm upgrade --install frontend-release ./helm/frontend-chart --namespace default --set image.repository=$DOCKER_REGISTRY/my-frontend-image --set image.tag=${{ github.sha }}
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+    - name: Verify Deployment
+      run: |
+        kubectl get pods --namespace default
+        kubectl get services --namespace default
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG }}
