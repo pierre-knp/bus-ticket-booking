@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: bus-app-frontend:latest
+    ports:
+      - "80:80"
+
+  backend:
+    image: bus-app-backend:latest
+    ports:
+      - "8081:8080"
