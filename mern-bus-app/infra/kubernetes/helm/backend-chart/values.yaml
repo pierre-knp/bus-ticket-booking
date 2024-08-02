@@ -1,0 +1,16 @@
+replicaCount: 2
+
+image:
+  repository: my-backend-image
+  tag: latest
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  # Configure your ingress if needed
+
+resources: {}
