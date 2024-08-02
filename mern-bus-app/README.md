@@ -76,3 +76,4 @@ Payment & Confirmation Page:
 * [MongoDB atlas](https://www.mongodb.com/cloud/atlas) - MongoDB Atlas is the global cloud database service for modern applications.
 * [Passport Js](http://www.passportjs.org/) - Passport is authentication middleware for Node.js. Extremely flexible and modular, Passport can be unobtrusively dropped in to any Express-based web application.
 ---
+The pipeline would need to be updated according to the deployment environment. 
